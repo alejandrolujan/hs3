@@ -31,7 +31,7 @@ object Samples extends Logging {
 		
 		val total = System.currentTimeMillis - startTime
 		
-		logger.info("Solved " + success + "/" + attempts + " in " + total/1000 + " secs")
+		logger.info("Solved " + success + "/" + attempts + " in " + total/1000 + "s")
 		logger.info("That's " + (100.0*success/attempts) + "%")
 		logger.info("Avg processing time: " + (total/attempts) + "ms")
 	}
