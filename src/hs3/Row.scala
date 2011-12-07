@@ -5,7 +5,7 @@ class Row(val index: Int) extends CellContainer {
 	
 	override def toString = {
 		val sb = new StringBuilder
-		
+	
 		for(cell <- cells) sb.append(cell.value.getOrElse('.'))
 		sb.insert(6, " ").insert(3, " ")
 		

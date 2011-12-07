@@ -10,36 +10,27 @@ abstract class CellContainer extends Logging {
 	
 	def addCell(cell: Cell) { cells = cells :+ cell }
 	
-	def discard(discard: Int, initiator: Cell) {
-		for(cell <- cells)
-			if(cell!=initiator)
-				cell.discard(discard)
-	}
+	def discard(discard: Int, initiator: Cell) = cells.filterNot(_ == initiator).foreach(c => c.discard(discard))
 	
-	/** Returns true if all the cells in this container have a value, no values are repeated, and all values are represented in this container. */
+	/** Returns true if all values are represented in this container. This, combined with the fact that there are as many values as the size of this container, ensures this container is solved. */
 	def isSolved: Boolean = {
+		// Get all the values in this container
 		val valueSet = Set[Int]()
+		cells.filter(_.solved).foreach(c => valueSet.add(c.value.get))
 		
-		for(cell <- cells){
-			cell.value match {
-				case Some(v) => if(!valueSet.add(v)) return false
-				case None => return false
-			}
-		}
-		
-		return valueSet.size == Board.size
+		valueSet.size == Board.size
 	}
 	
 	/** Finds naked tuples in this container, and returns true if the container was updated, false otherwise */
 	def findNakedTuples = {
 		var updated = false
 		
-		for(cell <- cells.filter(c => !c.solved)) {
+		for(cell <- cells.filter(!_.solved)) {
 			findNakedTuple(cell.potentialValues) match {
 				case Some(tuple) =>
 					// Found a naked N-tuple, remove values from other cells in container
 				  	logger.debug("Found naked tuple: " + tuple.mkString(","))
-				  	for(nonTupleCell <- (cells -- tuple.toList).filter( c => !c.solved))
+				  	for(nonTupleCell <- (cells -- tuple.toList).filterNot(_.solved))
 				  		updated |= nonTupleCell.discard(cell.potentialValues)
 				case _ =>
 			}
@@ -50,7 +41,7 @@ abstract class CellContainer extends Logging {
 	
 	private def findNakedTuple(values: Set[Int]) = {
 	  
-		val tuple = cells.filter(c => c.potentialValues.equals(values))
+		val tuple = cells.filter(_.potentialValues == values)
 		
 		if(tuple.size == values.size) 
 			Some(tuple) 
@@ -83,11 +74,11 @@ abstract class CellContainer extends Logging {
 		val tuple = Set[Cell]()
 		var containedValues = Set[Integer]()
 		
-		for(cell <- cells.filter(c => !c.solved)) {
+		for(cell <- cells.filterNot(_.solved)) {
 			val intersection = cell.potentialValues & values 
 			if(!intersection.isEmpty) {								// If cell contains at least one of values
 				tuple.add(cell)										// it belongs in the tuple
-				intersection.foreach( v => containedValues.add(v))	// 
+				intersection.foreach(v => containedValues.add(v)) 
 			}
 		}
 			  
