@@ -8,4 +8,4 @@ I have implemented only the simplest heuristics: Naked Tuples and Hidden Tuples,
 
 The repository includes the files needed for the Eclipse project, but feel free to ignore those if you choose a different environment.
 
-The only dependencies I am using are SLF4J and log4j for logging.
+The only dependencies I am using are SLF4J and log4j for logging..
